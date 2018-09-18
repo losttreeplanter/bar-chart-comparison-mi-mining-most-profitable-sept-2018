@@ -1,0 +1,78 @@
+---
+title: "Most profitable mining companies 2017"
+
+
+
+---
+
+formatting Vlad's chart
+
+ 
+
+```{r}
+library(tidyverse)
+
+
+raw_profit <- read_csv("C:/Users/mmccrae/Desktop/Profit margin miners Vlad Sept 2018 - Sheet1 (1) two version.csv")
+glimpse(raw_profit)
+
+
+```
+
+
+
+Let's gather
+
+```{r}
+
+gather_profit<-raw_profit %>% gather(key=year, value=NetProfitMarginPercentage, `2017`:`2016`)
+gather_profit
+
+```
+
+
+
+Let's chart
+
+```{r}
+
+library(scales)
+
+windowsFonts(`Zilla Slab` = windowsFont("Zilla Slab"))
+windowsFonts(Montserrat = windowsFont("Montserrat"))
+
+gather_profit$Company <- factor(gather_profit$Company, levels=c("Goldcorp","Teck Resources","Rio Tinto","Norilsk Nickel","Lundin","Fortescue","KAZ Minerals","Fresnillo","Uralkali","Polyus"))
+
+
+#gather_profit$Company <- factor(gather_profit$Company, levels=rev(levels(gather_profit$Company)))
+
+p <- ggplot(gather_profit, aes(Company, (NetProfitMarginPercentage*.01)))+
+  theme_minimal(base_size=8, base_family="Montserrat")+
+  geom_col(stat = "identity", aes(fill = year), position = "dodge")+
+  scale_fill_manual(values=c("#b1d059","#6b9d17")) +
+  scale_y_continuous(labels = scales::percent)+
+  labs(title="Top 10 Miners Ranked by Profitability", subtitle="In net profit margin percentage", caption = "Data from Mining Intelligence" )  +
+  theme(plot.title = element_text(size = rel(1.5), family="Zilla Slab"), panel.grid.minor = element_blank()) +
+  xlab("") +
+  ylab("")+
+  coord_flip()
+
+p
+
+ggsave(p, filename = "profit_margin_miners_ranked.png", dpi = 300, type = "cairo", width = 4, height = 3, units = "in")
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
